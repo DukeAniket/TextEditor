@@ -25,6 +25,9 @@ public class TextEditor extends JFrame implements ActionListener{
     //MenuBar Items
     JMenu file;
     JMenu edit;
+    JMenu tools;
+    JMenu format;
+    JMenu themes;
     JMenu help;
     
     //File Menu Items
@@ -41,6 +44,14 @@ public class TextEditor extends JFrame implements ActionListener{
     JMenuItem paste;
     JMenuItem selectall;
 
+    //Tools Menu Items
+    
+    //Format Menu Items
+    
+    //Themes Menu Items
+    JMenuItem light;
+    JMenuItem dark;
+    
     //Help Menu Items
     JMenuItem about;
     
@@ -49,6 +60,7 @@ public class TextEditor extends JFrame implements ActionListener{
     JScrollPane scrollpane;
     
     String text;
+    String fileName;
     
     TextEditor()
     {
@@ -59,6 +71,7 @@ public class TextEditor extends JFrame implements ActionListener{
         
         //File Menu
         file = new JMenu("File");
+        
         menubar.add(file);
         
         //File Menu Items.
@@ -75,7 +88,6 @@ public class TextEditor extends JFrame implements ActionListener{
         savefile = new JMenuItem("Save");
         savefile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         savefile.addActionListener(this);
-        savefile.setEnabled(false);
         file.add(savefile);
         
         saveasfile = new JMenuItem("Save As");
@@ -120,13 +132,40 @@ public class TextEditor extends JFrame implements ActionListener{
         edit.add(selectall);
         
         
+        //Tools Menu
+        tools = new JMenu("Tools");
+        menubar.add(tools);
+        
+        //Tools Menu Items
+        
+        //Format Menu
+        format = new JMenu("Format");
+        menubar.add(format);
+        
+        //Format Menu Items
+        
+        
+        //Themes Menu
+        themes = new JMenu("Themes");
+        menubar.add(themes);
+        
+        //Themes Menu Items
+        light = new JMenuItem("Light");
+        light.addActionListener(this);
+        themes.add(light);
+        
+        dark = new JMenuItem("Dark");
+        dark.addActionListener(this);
+        themes.add(dark);
+        
+        
         //Help Menu
         help = new JMenu("Help");
         menubar.add(help);
         
         //Help Menu Items
         about = new JMenuItem("About Editor");
-        help.addActionListener(this);
+        about.addActionListener(this);
         help.add(about);
         
         setJMenuBar(menubar);
@@ -152,52 +191,27 @@ public class TextEditor extends JFrame implements ActionListener{
         if(e.getActionCommand().equals("New"))
         {
             workspace.setText("");
+            this.setTitle("");
+            fileName = null;
         }
         else if(e.getActionCommand().equals("Open"))
         {
-            JFileChooser open = new JFileChooser();
-            open.setAcceptAllFileFilterUsed(false);
-            FileNameExtensionFilter restrict = new FileNameExtensionFilter("Only .txt Files","txt");
-            open.addChoosableFileFilter(restrict);
-            open.setApproveButtonText("Open");
-            
-            int action = open.showOpenDialog(open);
-            if(action!=JFileChooser.APPROVE_OPTION)
-            {
-                return;
-            }
-            File file = open.getSelectedFile();
-            try{
-                BufferedReader reader = new BufferedReader(new FileReader(file));
-                workspace.read(reader, null);
-            }catch(IOException ioe)
-            {
-                ioe.printStackTrace();
-            }
-            
+            open();
         }
         else if(e.getActionCommand().equals("Save"))
         {
-            
+            if(fileName==null)
+            {
+                savefile();
+            }
+            else
+            {
+                save();
+            }
         }
         else if(e.getActionCommand().equals("Save As"))
         {
-            JFileChooser saveas = new JFileChooser();
-            saveas.setApproveButtonText("Save As");
-            int action = saveas.showSaveDialog(this);
-            if(action != JFileChooser.APPROVE_OPTION)
-            {
-                return;
-            }
-            
-            File filename = new File(saveas.getSelectedFile() + ".txt");
-            BufferedWriter writer = null;
-            try{
-                writer = new BufferedWriter(new FileWriter(filename));
-            }catch(IOException ioe)
-            {
-                ioe.printStackTrace();
-            }
+            savefile();
         }
         else if(e.getActionCommand().equals("Print"))
         {
@@ -228,9 +242,92 @@ public class TextEditor extends JFrame implements ActionListener{
         {
             workspace.selectAll();
         }
+        else if(e.getActionCommand().equals("Light"))
+        {
+            setBackground(Color.WHITE);
+            menubar.setBackground(Color.WHITE);
+            menubar.setForeground(Color.BLACK);
+            UIManager.put("MenuItem.background", Color.WHITE);
+            UIManager.put("MenuItem.opaque", true);
+            workspace.setBackground(Color.WHITE);
+            workspace.setForeground(Color.BLACK);
+            workspace.setCaretColor(Color.BLACK);
+        }
+        else if(e.getActionCommand().equals("Dark"))
+        {
+            setBackground(Color.BLACK);
+            menubar.setBackground(Color.BLACK);
+            menubar.setOpaque(true);
+            menubar.setForeground(Color.WHITE);
+            UIManager.put("Menu.background", Color.BLACK);
+            UIManager.put("Menu.foreground", Color.WHITE);
+            UIManager.put("MenuItem.background", Color.BLACK);
+            UIManager.put("MenuItem.opaque", true);
+            workspace.setBackground(Color.BLACK);
+            workspace.setForeground(Color.WHITE);
+            workspace.setCaretColor(Color.WHITE);
+        }
         else if(e.getActionCommand().equals("About"))
         {
             new About().setVisible(true);
+        }
+    }
+    
+    private void open()
+    {
+        JFileChooser open = new JFileChooser();
+        open.setAcceptAllFileFilterUsed(false);
+        FileNameExtensionFilter restrict = new FileNameExtensionFilter("Only .txt Files","txt");
+        open.addChoosableFileFilter(restrict);
+        open.setApproveButtonText("Open");
+
+        int action = open.showOpenDialog(open);
+        if(action!=JFileChooser.APPROVE_OPTION)
+        {
+            return;
+        }
+        fileName = open.getSelectedFile().toString();
+        this.setTitle(fileName);
+        File file = open.getSelectedFile();
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            workspace.read(reader, null);
+        }catch(IOException ioe)
+        {
+            ioe.printStackTrace();
+        }
+    }
+    
+    private void savefile()
+    {
+        JFileChooser saveas = new JFileChooser();
+        saveas.setApproveButtonText("Save As");
+        int action = saveas.showSaveDialog(this);
+        if(action != JFileChooser.APPROVE_OPTION)
+        {
+            return;
+        }
+        fileName = new String(saveas.getSelectedFile() + ".txt");
+        this.setTitle(fileName);
+        File filename = new File(fileName);
+        BufferedWriter writer = null;
+        try{
+            writer = new BufferedWriter(new FileWriter(filename));
+        }catch(IOException ioe)
+        {
+            ioe.printStackTrace();
+        }
+    }
+    private void save()
+    {
+        this.setTitle(fileName);
+        File filename = new File(fileName);
+        BufferedWriter writer = null;
+        try{
+            writer = new BufferedWriter(new FileWriter(filename));
+        }catch(IOException ioe)
+        {
+            ioe.printStackTrace();
         }
     }
     
