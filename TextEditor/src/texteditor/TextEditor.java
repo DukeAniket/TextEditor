@@ -11,46 +11,33 @@ import javax.swing.*;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.event.*;
 import javax.swing.filechooser.*;
+import javax.swing.undo.*;
 
 /**
  *
  * @author aniketkumar
  */
 
-public class TextEditor extends JFrame implements ActionListener{
+public final class TextEditor extends JFrame implements ActionListener{
     
     JMenuBar menubar;
     
     //MenuBar Items
-    JMenu file;
-    JMenu edit;
-    JMenu tools;
-    JMenu format;
-    JMenu themes;
-    JMenu help;
+    JMenu file, edit, tools, format, themes, help;
     
     //File Menu Items
-    JMenuItem newfile;
-    JMenuItem openfile;
-    JMenuItem savefile;
-    JMenuItem saveasfile;
-    JMenuItem printfile;
+    JMenuItem newfile, openfile, savefile, saveasfile, printfile, exit;
     
     //Edit Menu Items
-    JMenuItem exit;
-    JMenuItem copy;
-    JMenuItem cut;
-    JMenuItem paste;
-    JMenuItem selectall;
-
-    //Tools Menu Items
+    JMenuItem copy, cut, paste, selectall, undo, redo, clearall;
     
     //Format Menu Items
+    JMenuItem font, size, color;
     
     //Themes Menu Items
-    JMenuItem light;
-    JMenuItem dark;
+    JMenuItem light, dark;
     
     //Help Menu Items
     JMenuItem about;
@@ -62,18 +49,128 @@ public class TextEditor extends JFrame implements ActionListener{
     String text;
     String fileName;
     
+    UndoManager undoManager;
+    
     TextEditor()
-    {
+    {   
         //Menu Bar
         menubar = new JMenuBar();
+        create_menubar();
+        setJMenuBar(menubar);
         
-        //Menu
+        undoManager = new UndoManager();
         
+        //Work Space
+        create_workspace();
+        
+        //Window Properties
+        window_properties();
+        
+    }
+            
+    public static void main(String[] args) {
+        new TextEditor().setVisible(true);
+        
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getActionCommand().equals("New"))
+            newfile();
+        
+        else if(e.getActionCommand().equals("Open"))
+            open();
+        
+        else if(e.getActionCommand().equals("Save"))
+        {
+            if(fileName==null)
+                saveasfile();
+            else
+                save();
+        }
+        
+        else if(e.getActionCommand().equals("Save As"))
+            saveasfile();
+        
+        else if(e.getActionCommand().equals("Print"))
+            printfile();
+        
+        else if(e.getActionCommand().equals("Exit"))
+            quit();
+        
+        else if(e.getActionCommand().equals("Copy"))
+            copy();
+        
+        else if(e.getActionCommand().equals("Cut"))
+            cut();
+        
+        else if(e.getActionCommand().equals("Paste"))
+            paste();
+        
+        else if(e.getActionCommand().equals("Select All"))
+            selectall();
+           
+        else if(e.getActionCommand().equals("Undo"))
+            undo();
+        
+        else if(e.getActionCommand().equals("Redo"))
+            redo();
+        
+        else if(e.getActionCommand().equals("Clear All"))
+            clearall();
+        
+        else if(e.getActionCommand().equals("Light"))
+            light();
+            
+        else if(e.getActionCommand().equals("Dark"))
+            dark();
+            
+        else if(e.getActionCommand().equals("About"))
+            about();
+    }
+    
+    private void window_properties()
+    {
+        this.setTitle("Untitled Document");
+        this.setBounds(50,50,1300,700);
+        this.setVisible(true);
+        
+    }
+    
+    public void create_menubar()
+    {
         //File Menu
         file = new JMenu("File");
-        
+        create_file_menu();
         menubar.add(file);
         
+        
+        //Edit Menu
+        edit = new JMenu("Edit");
+        create_edit_menu();
+        menubar.add(edit);
+        
+        
+        //Format Menu
+        format = new JMenu("Format");
+        create_format_menu();
+        menubar.add(format);
+        
+        
+        //Themes Menu
+        themes = new JMenu("Themes");
+        create_themes_menu();
+        menubar.add(themes);
+        
+        
+        //Help Menu
+        help = new JMenu("Help");
+        create_help_menu();
+        menubar.add(help);
+    }
+    
+    private void create_file_menu()
+    {
         //File Menu Items.
         newfile = new JMenuItem("New");
         newfile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
@@ -104,12 +201,10 @@ public class TextEditor extends JFrame implements ActionListener{
         exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         exit.addActionListener(this);
         file.add(exit);
-        
-        
-        //Edit Menu
-        edit = new JMenu("Edit");
-        menubar.add(edit);
-        
+    }
+    
+    private void create_edit_menu()
+    {
         //Edit Menu Items
         copy = new JMenuItem("Copy");
         copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
@@ -131,24 +226,30 @@ public class TextEditor extends JFrame implements ActionListener{
         selectall.addActionListener(this);
         edit.add(selectall);
         
+        undo = new JMenuItem("Undo");
+        undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+        undo.addActionListener(this);
+        edit.add(undo);
         
-        //Tools Menu
-        tools = new JMenu("Tools");
-        menubar.add(tools);
+        redo = new JMenuItem("Redo");
+        redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y,Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+        redo.addActionListener(this);
+        edit.add(redo);
         
-        //Tools Menu Items
+        clearall = new JMenuItem("Clear All");
+        clearall.addActionListener(this);
+        edit.add(clearall);
         
-        //Format Menu
-        format = new JMenu("Format");
-        menubar.add(format);
-        
+    }
+    
+    private void create_format_menu()
+    {
         //Format Menu Items
         
-        
-        //Themes Menu
-        themes = new JMenu("Themes");
-        menubar.add(themes);
-        
+    }
+    
+    private void create_themes_menu()
+    {
         //Themes Menu Items
         light = new JMenuItem("Light");
         light.addActionListener(this);
@@ -157,127 +258,45 @@ public class TextEditor extends JFrame implements ActionListener{
         dark = new JMenuItem("Dark");
         dark.addActionListener(this);
         themes.add(dark);
-        
-        
-        //Help Menu
-        help = new JMenu("Help");
-        menubar.add(help);
-        
+    }
+    
+    private void create_help_menu()
+    {
         //Help Menu Items
         about = new JMenuItem("About Editor");
         about.addActionListener(this);
         help.add(about);
-        
-        setJMenuBar(menubar);
-        
+    }
+    
+    private void create_workspace()
+    {
         workspace = new JTextArea();
+        workspace.getDocument().addUndoableEditListener(new UndoableEditListener() {
+            @Override
+            public void undoableEditHappened(UndoableEditEvent e) {
+                undoManager.addEdit(e.getEdit());
+            }
+        });
         workspace.setLineWrap(true);
         workspace.setWrapStyleWord(true);
         
         scrollpane = new JScrollPane(workspace);
         scrollpane.setBorder(BorderFactory.createEmptyBorder());
         add(scrollpane, BorderLayout.CENTER);
-        
-        setBounds(50,50,1300,700);
-        setVisible(true);
     }
-            
-    public static void main(String[] args) {
-        new TextEditor().setVisible(true);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals("New"))
-        {
-            workspace.setText("");
-            this.setTitle("");
-            fileName = null;
-        }
-        else if(e.getActionCommand().equals("Open"))
-        {
-            open();
-        }
-        else if(e.getActionCommand().equals("Save"))
-        {
-            if(fileName==null)
-            {
-                savefile();
-            }
-            else
-            {
-                save();
-            }
-        }
-        else if(e.getActionCommand().equals("Save As"))
-        {
-            savefile();
-        }
-        else if(e.getActionCommand().equals("Print"))
-        {
-            try{
-                workspace.print();
-            } catch (PrinterException ex) {
-                ex.printStackTrace();
-            }
-        }
-        else if(e.getActionCommand().equals("Exit"))
-        {
-            System.exit(0);
-        }
-        else if(e.getActionCommand().equals("Copy"))
-        {
-            text = workspace.getSelectedText();
-        }
-        else if(e.getActionCommand().equals("Cut"))
-        {
-            text = workspace.getSelectedText();
-            workspace.replaceRange("", workspace.getSelectionStart(), workspace.getSelectionEnd());
-        }
-        else if(e.getActionCommand().equals("Paste"))
-        {
-            workspace.insert(text, workspace.getCaretPosition());
-        }
-        else if(e.getActionCommand().equals("Select All"))
-        {
-            workspace.selectAll();
-        }
-        else if(e.getActionCommand().equals("Light"))
-        {
-            setBackground(Color.WHITE);
-            menubar.setBackground(Color.WHITE);
-            menubar.setForeground(Color.BLACK);
-            UIManager.put("MenuItem.background", Color.WHITE);
-            UIManager.put("MenuItem.opaque", true);
-            workspace.setBackground(Color.WHITE);
-            workspace.setForeground(Color.BLACK);
-            workspace.setCaretColor(Color.BLACK);
-        }
-        else if(e.getActionCommand().equals("Dark"))
-        {
-            setBackground(Color.BLACK);
-            menubar.setBackground(Color.BLACK);
-            menubar.setOpaque(true);
-            menubar.setForeground(Color.WHITE);
-            UIManager.put("Menu.background", Color.BLACK);
-            UIManager.put("Menu.foreground", Color.WHITE);
-            UIManager.put("MenuItem.background", Color.BLACK);
-            UIManager.put("MenuItem.opaque", true);
-            workspace.setBackground(Color.BLACK);
-            workspace.setForeground(Color.WHITE);
-            workspace.setCaretColor(Color.WHITE);
-        }
-        else if(e.getActionCommand().equals("About"))
-        {
-            new About().setVisible(true);
-        }
+    
+    private void newfile()
+    {
+        workspace.setText("");
+        this.setTitle("Untitled Document");
+        fileName = null;
     }
     
     private void open()
     {
         JFileChooser open = new JFileChooser();
         open.setAcceptAllFileFilterUsed(false);
-        FileNameExtensionFilter restrict = new FileNameExtensionFilter("Only .txt Files","txt");
+        FileNameExtensionFilter restrict = new FileNameExtensionFilter(".txt Files","txt");
         open.addChoosableFileFilter(restrict);
         open.setApproveButtonText("Open");
 
@@ -298,7 +317,20 @@ public class TextEditor extends JFrame implements ActionListener{
         }
     }
     
-    private void savefile()
+    private void save()
+    {
+        this.setTitle(fileName);
+        File filename = new File(fileName);
+        BufferedWriter writer = null;
+        try{
+            writer = new BufferedWriter(new FileWriter(filename));
+        }catch(IOException ioe)
+        {
+            ioe.printStackTrace();
+        }
+    }
+    
+    private void saveasfile()
     {
         JFileChooser saveas = new JFileChooser();
         saveas.setApproveButtonText("Save As");
@@ -318,17 +350,87 @@ public class TextEditor extends JFrame implements ActionListener{
             ioe.printStackTrace();
         }
     }
-    private void save()
+    
+    private void printfile()
     {
-        this.setTitle(fileName);
-        File filename = new File(fileName);
-        BufferedWriter writer = null;
         try{
-            writer = new BufferedWriter(new FileWriter(filename));
-        }catch(IOException ioe)
-        {
-            ioe.printStackTrace();
+            workspace.print();
+        } catch (PrinterException ex) {
+            ex.printStackTrace();
         }
+    }
+    
+    private void quit()
+    {
+        System.exit(0);
+    }
+    
+    private void copy()
+    {
+        text = workspace.getSelectedText();
+    }
+    
+    private void cut()
+    {
+        text = workspace.getSelectedText();
+        workspace.replaceRange("", workspace.getSelectionStart(), workspace.getSelectionEnd());
+    }
+    
+    private void paste()
+    {
+        workspace.insert(text, workspace.getCaretPosition());
+    }
+    
+    private void selectall()
+    {
+        workspace.selectAll();
+    }
+    
+    private void undo()
+    {
+        this.undoManager.undo();
+    }
+    
+    private void redo()
+    {
+        this.undoManager.redo();
+    }
+    
+    private void clearall()
+    {
+        workspace.setText("");
+    }
+    
+    private void light()
+    {
+        setBackground(Color.WHITE);
+        menubar.setBackground(Color.WHITE);
+        menubar.setForeground(Color.BLACK);
+        UIManager.put("MenuItem.background", Color.WHITE);
+        UIManager.put("MenuItem.opaque", true);
+        workspace.setBackground(Color.WHITE);
+        workspace.setForeground(Color.BLACK);
+        workspace.setCaretColor(Color.BLACK);
+    }
+    
+    private void dark()
+    {
+        setBackground(Color.BLACK);
+        menubar.setBackground(Color.BLACK);
+        menubar.setOpaque(true);
+        menubar.setForeground(Color.WHITE);
+        UIManager.put("Menu.background", Color.BLACK);
+        UIManager.put("Menu.foreground", Color.WHITE);
+        UIManager.put("MenuItem.background", Color.BLACK);
+        UIManager.put("MenuItem.opaque", true);
+        workspace.setBackground(Color.BLACK);
+        workspace.setForeground(Color.WHITE);
+        workspace.setCaretColor(Color.WHITE);
+    }
+    
+    private void about()
+    {
+        new About().setVisible(true);
     }
     
 }
