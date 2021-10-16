@@ -9,6 +9,7 @@ import java.awt.event.*;
 import java.awt.print.PrinterException;
 import javax.swing.*;
 import java.io.*;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.event.*;
@@ -58,7 +59,10 @@ public final class TextEditor extends JFrame implements ActionListener{
     int fontsize = 12;
     Color fontcolor = Color.BLACK;
     
-    UndoManager undoManager;
+    
+    //Undo Redo
+    private Stack<UndoableEdit> editHistory;
+    private Stack<UndoableEdit> undoHistory;
     
     TextEditor()
     {   
@@ -67,10 +71,12 @@ public final class TextEditor extends JFrame implements ActionListener{
         create_menubar();
         setJMenuBar(menubar);
         
-        undoManager = new UndoManager();
         
         //Work Space
         create_workspace();
+        
+        editHistory = new Stack<>();
+        undoHistory = new Stack<>();
         
         //Window Properties
         window_properties();
@@ -317,7 +323,11 @@ public final class TextEditor extends JFrame implements ActionListener{
         workspace.getDocument().addUndoableEditListener(new UndoableEditListener() {
             @Override
             public void undoableEditHappened(UndoableEditEvent e) {
-                undoManager.addEdit(e.getEdit());
+                if(e.getEdit().isSignificant())
+                {
+                    editHistory.push(e.getEdit());
+                    undoHistory.clear();
+                }
             }
         });
         workspace.setLineWrap(true);
@@ -613,12 +623,21 @@ public final class TextEditor extends JFrame implements ActionListener{
     
     private void undo()
     {
-        this.undoManager.undo();
+        UndoableEdit edit = editHistory.pop();
+        undoHistory.push(edit);
+        if(!editHistory.isEmpty())
+        {
+            edit.undo();
+        }
     }
     
     private void redo()
     {
-        this.undoManager.redo();
+        UndoableEdit edit = undoHistory.pop();
+        if(!undoHistory.isEmpty())
+        {
+            edit.redo();
+        }
     }
     
     private void clearall()
