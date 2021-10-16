@@ -38,6 +38,7 @@ public final class TextEditor extends JFrame implements ActionListener{
     JMenuItem size12, size14, size16, size18, size20, size22, size24, size30, size36, size42, size48, size66, size72; 
     JMenuItem fonttype1, fonttype2, fonttype3, fonttype4, fonttype5;
     JMenuItem fontstyle_plain, fontstyle_bold, fontstyle_italic;
+    JMenuItem color_red, color_blue, color_green, color_black, color_white, color_orange, color_yellow;
     
     //Themes Menu Items
     JMenuItem light, dark;
@@ -48,6 +49,7 @@ public final class TextEditor extends JFrame implements ActionListener{
     //Text Area
     JTextArea workspace;
     JScrollPane scrollpane;
+    Insets insets;
     
     String text;
     String fileName;
@@ -55,7 +57,6 @@ public final class TextEditor extends JFrame implements ActionListener{
     int fontstyle = Font.PLAIN;
     int fontsize = 12;
     Color fontcolor = Color.BLACK;
-    
     
     UndoManager undoManager;
     
@@ -87,6 +88,7 @@ public final class TextEditor extends JFrame implements ActionListener{
         
     }
 
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("New"))
@@ -137,15 +139,19 @@ public final class TextEditor extends JFrame implements ActionListener{
         else if(e.getActionCommand().startsWith("fontstyle"))
             fontstyle(e.getActionCommand());
         
+        else if(e.getActionCommand().startsWith("color"))
+            fontcolor(e.getActionCommand());
+        
         else if(e.getActionCommand().equals("Light"))
             light();
             
         else if(e.getActionCommand().equals("Dark"))
             dark();
             
-        else if(e.getActionCommand().equals("About"))
+        else if(e.getActionCommand().equals("about"))
             about();
     }
+    
     
     private void window_properties()
      {
@@ -276,7 +282,7 @@ public final class TextEditor extends JFrame implements ActionListener{
         create_style_submenu();
         format.add(style);
         
-        color = new JMenu("Item");
+        color = new JMenu("Color");
         create_color_submenu();
         format.add(color);
         
@@ -299,12 +305,15 @@ public final class TextEditor extends JFrame implements ActionListener{
         //Help Menu Items
         about = new JMenuItem("About Editor");
         about.addActionListener(this);
+        about.setActionCommand("about");
         help.add(about);
     }
     
     private void create_workspace()
     {
+        insets = new Insets(5,5,5,5);
         workspace = new JTextArea();
+        workspace.setMargin(insets);
         workspace.getDocument().addUndoableEditListener(new UndoableEditListener() {
             @Override
             public void undoableEditHappened(UndoableEditEvent e) {
@@ -437,7 +446,40 @@ public final class TextEditor extends JFrame implements ActionListener{
     
     private void create_color_submenu()
     {
+        color_red = new JMenuItem("Red");
+        color_red.addActionListener(this);
+        color_red.setActionCommand("color_red");
+        color.add(color_red);
         
+        color_blue = new JMenuItem("Blue");
+        color_blue.addActionListener(this);
+        color_blue.setActionCommand("color_blue");
+        color.add(color_blue);
+        
+        color_green = new JMenuItem("Green");
+        color_green.addActionListener(this);
+        color_green.setActionCommand("color_green");
+        color.add(color_green);
+        
+        color_black = new JMenuItem("Black");
+        color_black.addActionListener(this);
+        color_black.setActionCommand("color_black");
+        color.add(color_black);
+        
+        color_white = new JMenuItem("White");
+        color_white.addActionListener(this);
+        color_white.setActionCommand("color_white");
+        color.add(color_white);
+        
+        color_orange = new JMenuItem("Orange");
+        color_orange.addActionListener(this);
+        color_orange.setActionCommand("color_orange");
+        color.add(color_orange);
+        
+        color_yellow = new JMenuItem("Yellow");
+        color_yellow.addActionListener(this);
+        color_yellow.setActionCommand("color_yellow");
+        color.add(color_yellow);
     }
     
     private void newfile()
@@ -479,6 +521,9 @@ public final class TextEditor extends JFrame implements ActionListener{
         BufferedWriter writer = null;
         try{
             writer = new BufferedWriter(new FileWriter(filename));
+            writer.write(this.workspace.getText());
+            writer.flush();
+            writer.close();
         }catch(IOException ioe)
         {
             ioe.printStackTrace();
@@ -508,6 +553,9 @@ public final class TextEditor extends JFrame implements ActionListener{
         BufferedWriter writer = null;
         try{
             writer = new BufferedWriter(new FileWriter(filename));
+            writer.write(this.workspace.getText());
+            writer.flush();
+            writer.close();
         }catch(IOException ioe)
         {
             ioe.printStackTrace();
@@ -598,9 +646,21 @@ public final class TextEditor extends JFrame implements ActionListener{
         updatefont();
     }
     
-    private void fontcolor()
+    private void fontcolor(String color)
     {
-        
+        String colorname = color.substring("color_".length());
+        switch(colorname)
+        {
+//            color_red, color_blue, color_green, color_black, color_white, color_orange, color_yellow
+            case "red": fontcolor = Color.RED; break;
+            case "blue": fontcolor = Color.BLUE; break;
+            case "green": fontcolor = Color.GREEN; break;
+            case "black": fontcolor = Color.BLACK; break;
+            case "white": fontcolor = Color.WHITE; break;
+            case "orange": fontcolor = Color.ORANGE; break;
+            case "yellow": fontcolor = Color.YELLOW; break;
+        }
+        updatefont();
     }
     
     private void light()
@@ -623,7 +683,7 @@ public final class TextEditor extends JFrame implements ActionListener{
     
     private void about()
     {
-        new About().setVisible(true);
+        new About();
     }
     
     private void updatefont()
