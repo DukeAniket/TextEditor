@@ -34,6 +34,9 @@ public final class TextEditor extends JFrame implements ActionListener{
     //Edit Menu Items
     JMenuItem copy, cut, paste, selectall, undo, redo, clearall;
     
+    //Tools Menu Items
+    JMenuItem find, replace;
+    
     //Format Menu Items
     JMenu font, size, style, color;
     JMenuItem size12, size14, size16, size18, size20, size22, size24, size30, size36, size42, size48, size66, size72; 
@@ -136,6 +139,12 @@ public final class TextEditor extends JFrame implements ActionListener{
         else if(e.getActionCommand().equals("Clear All"))
             clearall();
         
+        else if(e.getActionCommand().equals("find"))
+            find();
+        
+        else if(e.getActionCommand().equals("replace"))
+            replace();
+        
         else if(e.getActionCommand().startsWith("fonttype"))
             font(e.getActionCommand());
         
@@ -180,6 +189,12 @@ public final class TextEditor extends JFrame implements ActionListener{
         edit = new JMenu("Edit");
         create_edit_menu();
         menubar.add(edit);
+        
+        
+        //Tools Menu
+        tools = new JMenu("Tools");
+        create_tools_menu();
+        menubar.add(tools);
         
         
         //Format Menu
@@ -271,6 +286,20 @@ public final class TextEditor extends JFrame implements ActionListener{
         clearall.addActionListener(this);
         edit.add(clearall);
         
+    }
+    
+    private void create_tools_menu()
+    {
+        find = new JMenuItem("Find");
+        find.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+        find.addActionListener(this);
+        find.setActionCommand("find");
+        tools.add(find);
+        
+        replace = new JMenuItem("Find and Replace");
+        replace.addActionListener(this);
+        replace.setActionCommand("replace");
+        tools.add(replace);
     }
     
     private void create_format_menu()
@@ -643,6 +672,16 @@ public final class TextEditor extends JFrame implements ActionListener{
     private void clearall()
     {
         workspace.setText("");
+    }
+    
+    private void find()
+    {
+        new Find(this.workspace);
+    }
+    
+    private void replace()
+    {
+        new Replace();
     }
     
     private void font(String type)
