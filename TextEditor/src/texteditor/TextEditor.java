@@ -34,7 +34,10 @@ public final class TextEditor extends JFrame implements ActionListener{
     JMenuItem copy, cut, paste, selectall, undo, redo, clearall;
     
     //Format Menu Items
-    JMenuItem font, size, color;
+    JMenu font, size, style, color;
+    JMenuItem size12, size14, size16, size18, size20, size22, size24, size30, size36, size42, size48, size66, size72; 
+    JMenuItem fonttype1, fonttype2, fonttype3, fonttype4, fonttype5;
+    JMenuItem fontstyle_plain, fontstyle_bold, fontstyle_italic;
     
     //Themes Menu Items
     JMenuItem light, dark;
@@ -48,6 +51,11 @@ public final class TextEditor extends JFrame implements ActionListener{
     
     String text;
     String fileName;
+    String fonttype = Font.MONOSPACED;
+    int fontstyle = Font.PLAIN;
+    int fontsize = 12;
+    Color fontcolor = Color.BLACK;
+    
     
     UndoManager undoManager;
     
@@ -82,13 +90,8 @@ public final class TextEditor extends JFrame implements ActionListener{
             open();
         
         else if(e.getActionCommand().equals("Save"))
-        {
-            if(fileName==null)
-                saveasfile();
-            else
-                save();
-        }
-        
+            savefile();
+            
         else if(e.getActionCommand().equals("Save As"))
             saveasfile();
         
@@ -118,6 +121,15 @@ public final class TextEditor extends JFrame implements ActionListener{
         
         else if(e.getActionCommand().equals("Clear All"))
             clearall();
+        
+        else if(e.getActionCommand().startsWith("fonttype"))
+            font(e.getActionCommand());
+        
+        else if(e.getActionCommand().startsWith("size"))
+            fontsize(e.getActionCommand());
+        
+        else if(e.getActionCommand().startsWith("fontstyle"))
+            fontstyle(e.getActionCommand());
         
         else if(e.getActionCommand().equals("Light"))
             light();
@@ -245,6 +257,21 @@ public final class TextEditor extends JFrame implements ActionListener{
     private void create_format_menu()
     {
         //Format Menu Items
+        font = new JMenu("Font");
+        create_font_submenu();
+        format.add(font);
+        
+        size = new JMenu("Size");
+        create_size_submenu();
+        format.add(size);
+        
+        style = new JMenu("Style");
+        create_style_submenu();
+        format.add(style);
+        
+        color = new JMenu("Item");
+        create_color_submenu();
+        format.add(color);
         
     }
     
@@ -283,6 +310,127 @@ public final class TextEditor extends JFrame implements ActionListener{
         scrollpane = new JScrollPane(workspace);
         scrollpane.setBorder(BorderFactory.createEmptyBorder());
         add(scrollpane, BorderLayout.CENTER);
+    }
+    
+    private void create_font_submenu()
+    {
+        fonttype1 = new JMenuItem("Dialog");
+        fonttype1.setActionCommand("fonttype1");
+        fonttype1.addActionListener(this);
+        font.add(fonttype1);
+        
+        fonttype2 = new JMenuItem("DialogInput");
+        fonttype2.setActionCommand("fonttype2");
+        fonttype2.addActionListener(this);
+        font.add(fonttype2);
+        
+        fonttype3 = new JMenuItem("Monospaced");
+        fonttype3.setActionCommand("fonttype3");
+        fonttype3.addActionListener(this);
+        font.add(fonttype3);
+        
+        fonttype4 = new JMenuItem("Sans Serif");
+        fonttype4.setActionCommand("fonttype4");
+        fonttype4.addActionListener(this);
+        font.add(fonttype4);
+        
+        fonttype5 = new JMenuItem("Serif");
+        fonttype5.setActionCommand("fonttype5");
+        fonttype5.addActionListener(this);
+        font.add(fonttype5);
+    }
+    
+    private void create_size_submenu()
+    {
+        //size18, size22
+        size12 = new JMenuItem("12");
+        size12.setActionCommand("size12");
+        size12.addActionListener(this);
+        size.add(size12);
+        
+        size14 = new JMenuItem("14");
+        size14.setActionCommand("size14");
+        size14.addActionListener(this);
+        size.add(size14);
+        
+        size16 = new JMenuItem("16");
+        size16.setActionCommand("size16");
+        size16.addActionListener(this);
+        size.add(size16);
+        
+        size18 = new JMenuItem("18");
+        size18.setActionCommand("size18");
+        size18.addActionListener(this);
+        size.add(size18);
+        
+        size20 = new JMenuItem("20");
+        size20.setActionCommand("size20");
+        size20.addActionListener(this);
+        size.add(size20);
+        
+        size22 = new JMenuItem("22");
+        size22.setActionCommand("size22");
+        size22.addActionListener(this);
+        size.add(size22);
+        
+        size24 = new JMenuItem("24");
+        size24.setActionCommand("size24");
+        size24.addActionListener(this);
+        size.add(size24);
+        
+        size30 = new JMenuItem("30");
+        size30.setActionCommand("size30");
+        size30.addActionListener(this);
+        size.add(size30);
+        
+        size36 = new JMenuItem("36");
+        size36.setActionCommand("size36");
+        size36.addActionListener(this);
+        size.add(size36);
+        
+        size42 = new JMenuItem("42");
+        size42.setActionCommand("size42");
+        size42.addActionListener(this);
+        size.add(size42);
+        
+        size48 = new JMenuItem("48");
+        size48.setActionCommand("size48");
+        size48.addActionListener(this);
+        size.add(size48);
+        
+        size66 = new JMenuItem("66");
+        size66.setActionCommand("size66");
+        size66.addActionListener(this);
+        size.add(size66);
+        
+        size72 = new JMenuItem("72");
+        size72.setActionCommand("size72");
+        size72.addActionListener(this);
+        size.add(size72);
+    }
+    
+    private void create_style_submenu()
+    {
+        //JMenuItem fontstyle_plain, fontstyle_bold, fontstyle_italic;
+        fontstyle_plain = new JMenuItem("Plain");
+        fontstyle_plain.addActionListener(this);
+        fontstyle_plain.setActionCommand("fontstyle_plain");
+        style.add(fontstyle_plain);
+        
+        fontstyle_bold = new JMenuItem("Bold");
+        fontstyle_bold.addActionListener(this);
+        fontstyle_bold.setActionCommand("fontstyle_bold");
+        style.add(fontstyle_bold);
+        
+        fontstyle_italic = new JMenuItem("Italic");
+        fontstyle_italic.addActionListener(this);
+        fontstyle_italic.setActionCommand("fontstyle_italic");
+        style.add(fontstyle_italic);
+    }
+    
+    private void create_color_submenu()
+    {
+        
     }
     
     private void newfile()
@@ -328,6 +476,14 @@ public final class TextEditor extends JFrame implements ActionListener{
         {
             ioe.printStackTrace();
         }
+    }
+    
+    private void savefile()
+    {
+        if(fileName==null)
+            saveasfile();
+        else
+            save();
     }
     
     private void saveasfile()
@@ -401,36 +557,83 @@ public final class TextEditor extends JFrame implements ActionListener{
         workspace.setText("");
     }
     
+    private void font(String type)
+    {
+        int fontindex = Integer.parseInt(type.substring("fonttype".length()));
+        
+        switch(fontindex)
+        {
+            case 1: fonttype = Font.DIALOG; break;
+            case 2: fonttype = Font.DIALOG_INPUT; break;
+            case 3: fonttype = Font.MONOSPACED; break;
+            case 4: fonttype = Font.SANS_SERIF; break;
+            case 5: fonttype = Font.SERIF; break;
+        }
+        
+        updatefont();
+    }
+    
+    private void fontsize(String size)
+    {
+        fontsize = Integer.parseInt(size.substring("size".length()));
+        updatefont();
+    }
+    
+    private void fontstyle(String style)
+    {
+        String stylecase = style.substring("fontstyle_".length());
+        switch(stylecase)
+        {
+            case "plain": fontstyle = Font.PLAIN; break;
+            case "bold": fontstyle = Font.BOLD; break;
+            case "italic": fontstyle = Font.ITALIC; break;
+        }
+        updatefont();
+    }
+    
+    private void fontcolor()
+    {
+        
+    }
+    
     private void light()
     {
+        fontcolor = Color.BLACK;
+        updatefont();
         setBackground(Color.WHITE);
-        menubar.setBackground(Color.WHITE);
-        menubar.setForeground(Color.BLACK);
-        UIManager.put("MenuItem.background", Color.WHITE);
-        UIManager.put("MenuItem.opaque", true);
+//        menubar.setBackground(Color.WHITE);
+//        menubar.setForeground(Color.BLACK);
+//        UIManager.put("MenuItem.background", Color.WHITE);
+//        UIManager.put("MenuItem.opaque", true);
         workspace.setBackground(Color.WHITE);
-        workspace.setForeground(Color.BLACK);
         workspace.setCaretColor(Color.BLACK);
     }
     
     private void dark()
     {
+        fontcolor = Color.WHITE;
+        updatefont();
         setBackground(Color.BLACK);
-        menubar.setBackground(Color.BLACK);
-        menubar.setOpaque(true);
-        menubar.setForeground(Color.WHITE);
-        UIManager.put("Menu.background", Color.BLACK);
-        UIManager.put("Menu.foreground", Color.WHITE);
-        UIManager.put("MenuItem.background", Color.BLACK);
-        UIManager.put("MenuItem.opaque", true);
+//        menubar.setBackground(Color.BLACK);
+//        menubar.setOpaque(true);
+//        menubar.setForeground(Color.WHITE);
+//        UIManager.put("Menu.background", Color.BLACK);
+//        UIManager.put("Menu.foreground", Color.WHITE);
+//        UIManager.put("MenuItem.background", Color.BLACK);
+//        UIManager.put("MenuItem.opaque", true);
         workspace.setBackground(Color.BLACK);
-        workspace.setForeground(Color.WHITE);
         workspace.setCaretColor(Color.WHITE);
     }
     
     private void about()
     {
         new About().setVisible(true);
+    }
+    
+    private void updatefont()
+    {
+        this.workspace.setFont(new Font(fonttype, fontstyle, fontsize));
+        this.workspace.setForeground(fontcolor);
     }
     
 }
