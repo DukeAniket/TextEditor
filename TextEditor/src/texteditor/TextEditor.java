@@ -608,10 +608,6 @@ public final class TextEditor extends JFrame implements ActionListener{
         fontcolor = Color.BLACK;
         updatefont();
         setBackground(Color.WHITE);
-//        menubar.setBackground(Color.WHITE);
-//        menubar.setForeground(Color.BLACK);
-//        UIManager.put("MenuItem.background", Color.WHITE);
-//        UIManager.put("MenuItem.opaque", true);
         workspace.setBackground(Color.WHITE);
         workspace.setCaretColor(Color.BLACK);
     }
@@ -621,13 +617,6 @@ public final class TextEditor extends JFrame implements ActionListener{
         fontcolor = Color.WHITE;
         updatefont();
         setBackground(Color.BLACK);
-//        menubar.setBackground(Color.BLACK);
-//        menubar.setOpaque(true);
-//        menubar.setForeground(Color.WHITE);
-//        UIManager.put("Menu.background", Color.BLACK);
-//        UIManager.put("Menu.foreground", Color.WHITE);
-//        UIManager.put("MenuItem.background", Color.BLACK);
-//        UIManager.put("MenuItem.opaque", true);
         workspace.setBackground(Color.BLACK);
         workspace.setCaretColor(Color.WHITE);
     }
