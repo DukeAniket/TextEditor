@@ -493,8 +493,18 @@ public final class TextEditor extends JFrame implements ActionListener{
     {
         JFileChooser open = new JFileChooser();
         open.setAcceptAllFileFilterUsed(false);
-        FileNameExtensionFilter restrict = new FileNameExtensionFilter(".txt Files","txt");
-        open.addChoosableFileFilter(restrict);
+        FileNameExtensionFilter restrict1 = new FileNameExtensionFilter(".txt Files","txt");
+        FileNameExtensionFilter restrict2 = new FileNameExtensionFilter("C Files","c");
+        FileNameExtensionFilter restrict3 = new FileNameExtensionFilter("Java Files","java");
+        FileNameExtensionFilter restrict4 = new FileNameExtensionFilter("Python Files","py");
+        FileNameExtensionFilter restrict5 = new FileNameExtensionFilter("HTML Files","html");
+        FileNameExtensionFilter restrict6 = new FileNameExtensionFilter("Shell Script Files","sh");
+        open.addChoosableFileFilter(restrict1);
+        open.addChoosableFileFilter(restrict2);
+        open.addChoosableFileFilter(restrict3);
+        open.addChoosableFileFilter(restrict4);
+        open.addChoosableFileFilter(restrict5);
+        open.addChoosableFileFilter(restrict6);
         open.setApproveButtonText("Open");
 
         int action = open.showOpenDialog(open);
@@ -547,7 +557,11 @@ public final class TextEditor extends JFrame implements ActionListener{
         {
             return;
         }
-        fileName = new String(saveas.getSelectedFile() + ".txt");
+        fileName = new String(saveas.getSelectedFile()+"");
+        if(!fileName.contains("."))
+        {
+            fileName = new String(fileName + ".txt");
+        }
         this.setTitle(fileName);
         File filename = new File(fileName);
         BufferedWriter writer = null;
