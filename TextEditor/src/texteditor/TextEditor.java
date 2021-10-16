@@ -51,7 +51,7 @@ public final class TextEditor extends JFrame implements ActionListener{
     
     String text;
     String fileName;
-    String fonttype = Font.MONOSPACED;
+    String fonttype = "Helvetica";
     int fontstyle = Font.PLAIN;
     int fontsize = 12;
     Color fontcolor = Color.BLACK;
@@ -77,7 +77,13 @@ public final class TextEditor extends JFrame implements ActionListener{
     }
             
     public static void main(String[] args) {
-        new TextEditor().setVisible(true);
+        
+        String OS = System.getProperty("os.name");
+        if(OS.toLowerCase().indexOf("mac")>=0)
+        {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+        }
+        new TextEditor();
         
     }
 
@@ -142,7 +148,8 @@ public final class TextEditor extends JFrame implements ActionListener{
     }
     
     private void window_properties()
-    {
+     {
+        updatefont();
         this.setTitle("Untitled Document");
         this.setBounds(50,50,1300,700);
         this.setVisible(true);
@@ -314,12 +321,12 @@ public final class TextEditor extends JFrame implements ActionListener{
     
     private void create_font_submenu()
     {
-        fonttype1 = new JMenuItem("Dialog");
+        fonttype1 = new JMenuItem("Helvetica");
         fonttype1.setActionCommand("fonttype1");
         fonttype1.addActionListener(this);
         font.add(fonttype1);
         
-        fonttype2 = new JMenuItem("DialogInput");
+        fonttype2 = new JMenuItem("Dialog");
         fonttype2.setActionCommand("fonttype2");
         fonttype2.addActionListener(this);
         font.add(fonttype2);
@@ -563,8 +570,8 @@ public final class TextEditor extends JFrame implements ActionListener{
         
         switch(fontindex)
         {
-            case 1: fonttype = Font.DIALOG; break;
-            case 2: fonttype = Font.DIALOG_INPUT; break;
+            case 1: fonttype = "Helvetica"; break;
+            case 2: fonttype = Font.DIALOG; break;
             case 3: fonttype = Font.MONOSPACED; break;
             case 4: fonttype = Font.SANS_SERIF; break;
             case 5: fonttype = Font.SERIF; break;
