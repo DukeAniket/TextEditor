@@ -35,12 +35,14 @@ public class Replace extends JFrame implements ActionListener{
     int wordlength;
     int textlength;
     int newWordLength;
+    boolean darktheme;
     Font font = new Font("Helvetica", Font.PLAIN, 16);
     Font btnfont = new Font("Helvetica", Font.PLAIN, 15);
     Insets insets = new Insets(10, 10, 7, 10);
     
-    Replace(JTextArea workspace)
+    Replace(JTextArea workspace, boolean darktheme)
     {
+        this.darktheme = darktheme;
         this.workspace = workspace;
         this.createWindow();
     }
@@ -62,6 +64,7 @@ public class Replace extends JFrame implements ActionListener{
         this.create_cancelbtn();
         this.create_replacebtn();
         this.create_replaceallbtn();
+        this.darktheme();
     }
 
     private void create_findlabel()
@@ -272,6 +275,36 @@ public class Replace extends JFrame implements ActionListener{
                 this.workspace.replaceRange(toChange, indexList.get(0), indexList.get(0) + wordlength);
                 this.find();
             }
+        }
+    }
+    
+     private void darktheme()
+    {
+        if(this.darktheme)
+        {
+            this.getContentPane().setBackground(Color.DARK_GRAY);
+            this.getContentPane().setForeground(Color.WHITE);
+            this.lbl_find.setBackground(Color.DARK_GRAY);
+            this.lbl_find.setForeground(Color.WHITE);
+            this.tf_find.setBackground(Color.GRAY);
+            this.tf_find.setForeground(Color.WHITE);
+            this.lbl_replace.setBackground(Color.DARK_GRAY);
+            this.lbl_replace.setForeground(Color.WHITE);
+            this.tf_replace.setBackground(Color.GRAY);
+            this.tf_replace.setForeground(Color.WHITE);
+        }
+        else
+        {
+            this.getContentPane().setBackground(Color.WHITE);
+            this.getContentPane().setForeground(Color.BLACK);
+            this.lbl_find.setBackground(Color.WHITE);
+            this.lbl_find.setForeground(Color.BLACK);
+            this.tf_find.setBackground(Color.WHITE);
+            this.tf_find.setForeground(Color.BLACK);
+            this.lbl_replace.setBackground(Color.WHITE);
+            this.lbl_replace.setForeground(Color.BLACK);
+            this.tf_replace.setBackground(Color.WHITE);
+            this.tf_replace.setForeground(Color.BLACK);
         }
     }
     
