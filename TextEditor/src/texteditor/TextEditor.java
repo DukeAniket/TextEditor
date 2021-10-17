@@ -681,7 +681,7 @@ public final class TextEditor extends JFrame implements ActionListener{
     
     private void replace()
     {
-        new Replace();
+        new Replace(this.workspace);
     }
     
     private void font(String type)
