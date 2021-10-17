@@ -16,6 +16,7 @@ import javax.swing.event.*;
  */
 public class Find extends JFrame implements ActionListener{
     
+    String title;
     JTextArea workspace;
     JLabel lbl_find;
     JTextField tf_find;
@@ -24,7 +25,7 @@ public class Find extends JFrame implements ActionListener{
     JButton nextbtn;
     String findFrom;
     String toFind;
-    ArrayList<Integer> indexList = new ArrayList<>();;
+    ArrayList<Integer> indexList;
     int arrayindex;
     int wordlength;
     int textlength;
@@ -113,8 +114,10 @@ public class Find extends JFrame implements ActionListener{
     
     private void createWindow()
     {
+        this.title = new String("Find");
         this.setLayout(null);
         this.setBounds(420, 220, 550, 250);
+        this.setTitle(title);
         this.setVisible(true);
         this.setAlwaysOnTop(true);
     }
@@ -122,16 +125,17 @@ public class Find extends JFrame implements ActionListener{
     private void find()
     {
         arrayindex = 0;
-        indexList.clear();
-        this.findFrom = this.workspace.getText().trim();
-        this.toFind = this.tf_find.getText().trim();
+        this.findFrom = this.workspace.getText().toLowerCase();
+        this.toFind = this.tf_find.getText().trim().toLowerCase();
         if(this.toFind.isEmpty())
         {
             JOptionPane.showMessageDialog(rootPane, "Enter word!");
         }
         else
         {
-            StringSearch();
+            wordlength = this.toFind.length();
+            textlength = this.findFrom.length();
+            indexList = new Finder().Finder(toFind, findFrom);
         }
         if(indexList.isEmpty())
         {
@@ -139,9 +143,9 @@ public class Find extends JFrame implements ActionListener{
         }
         else
         {
-            workspace.setCaretPosition(indexList.get(arrayindex) + wordlength - 1);
-            workspace.setSelectionStart(indexList.get(arrayindex) - 1);
-            workspace.setSelectionEnd(indexList.get(arrayindex) + wordlength - 1);
+            workspace.setCaretPosition(indexList.get(arrayindex) + wordlength);
+            workspace.setSelectionStart(indexList.get(arrayindex));
+            workspace.setSelectionEnd(indexList.get(arrayindex) + wordlength);
         }
         if(indexList.size()>1)
         {
@@ -153,9 +157,10 @@ public class Find extends JFrame implements ActionListener{
     
     private void next()
     {
-        workspace.setCaretPosition(indexList.get(arrayindex) + wordlength - 1);
-        workspace.setSelectionStart(indexList.get(arrayindex) - 1);
-        workspace.setSelectionEnd(indexList.get(arrayindex) + wordlength - 1);
+        System.out.println("Hello");
+        workspace.setCaretPosition(indexList.get(arrayindex) + wordlength);
+        workspace.setSelectionStart(indexList.get(arrayindex));
+        workspace.setSelectionEnd(indexList.get(arrayindex) + wordlength);
         
         if(this.arrayindex == this.indexList.size()-1)
         {
@@ -172,51 +177,6 @@ public class Find extends JFrame implements ActionListener{
         dispose();
     }
     
-    private void StringSearch()
-    {
-        wordlength = this.toFind.length();
-        textlength = this.findFrom.length();
-        long hashWord = 0;
-        long hashText = 0;
-        int p = 13;
-        
-        if(textlength < wordlength)
-        {
-            return;
-        }
-        
-        for(int i = 0; i < wordlength; i++)
-        {
-            hashWord = (hashWord + (toFind.charAt(i)))%p;
-        }
-        
-        for(int i = 0; i < wordlength; i++)
-        {
-            hashText = (hashText + (findFrom.charAt(i)))%p;
-        }
-        
-        for(int i = 1; i<=(textlength - wordlength);i++)
-        {
-            if(hashWord == hashText)
-            {
-                matchstring(i);
-            }
-            hashText = (hashText - findFrom.charAt(i - 1))%p;
-            hashText = (hashText + findFrom.charAt(i + wordlength - 1))%p;
-        }
-        if(hashWord == hashText)
-        {
-            matchstring(textlength - wordlength);
-        }
-    }
-    
-    private void matchstring(int i)
-    {
-        if(toFind.equals(findFrom.substring(i, i+wordlength-1)));
-        {
-            indexList.add(i);
-        }
-    }
     
     @Override
     public void actionPerformed(ActionEvent e) {
