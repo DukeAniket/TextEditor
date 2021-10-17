@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.event.*;
 import javax.swing.filechooser.*;
 import javax.swing.undo.*;
@@ -170,6 +171,18 @@ public final class TextEditor extends JFrame implements ActionListener{
     
     private void window_properties()
      {
+        try {
+            Image i = ImageIO.read(getClass().getResource("/texteditor/icons/icon.png"));
+            this.setIconImage(i);
+            if(System.getProperty("os.name").toLowerCase().indexOf("mac")>=0)
+            {
+                final Taskbar taskbar = Taskbar.getTaskbar();
+                taskbar.setIconImage(i);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         updatefont();
         this.setTitle("Untitled Document");
         this.setBounds(50,50,1300,700);
