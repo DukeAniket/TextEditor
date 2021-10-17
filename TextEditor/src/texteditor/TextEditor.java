@@ -736,7 +736,6 @@ public final class TextEditor extends JFrame implements ActionListener{
         String colorname = color.substring("color_".length());
         switch(colorname)
         {
-//            color_red, color_blue, color_green, color_black, color_white, color_orange, color_yellow
             case "red": fontcolor = Color.RED; break;
             case "blue": fontcolor = Color.BLUE; break;
             case "green": fontcolor = Color.GREEN; break;
