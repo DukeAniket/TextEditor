@@ -70,7 +70,6 @@ public class Finder {
         i--;
         if(toFind.equals(findFrom.substring(i, i + wordlength)));
         {
-            System.out.println(findFrom.substring(i, i + wordlength)+" , "+ findFrom.charAt(i + wordlength));
             indexList.add(i);
         }
     }
