@@ -26,6 +26,7 @@ public class Find extends JFrame implements ActionListener{
     String findFrom;
     String toFind;
     ArrayList<Integer> indexList;
+    boolean darktheme;
     int arrayindex;
     int wordlength;
     int textlength;
@@ -33,8 +34,9 @@ public class Find extends JFrame implements ActionListener{
     Font btnfont = new Font("Helvetica", Font.PLAIN, 15);
     Insets insets = new Insets(10, 10, 7, 10);
     
-    Find(JTextArea workspace)
+    Find(JTextArea workspace, boolean darktheme)
     {
+        this.darktheme = darktheme;
         this.workspace = workspace;
         create_findlabel();
         create_findTextField();
@@ -115,6 +117,7 @@ public class Find extends JFrame implements ActionListener{
     private void createWindow()
     {
         this.title = new String("Find");
+        this.darktheme();
         this.setLayout(null);
         this.setBounds(420, 220, 550, 250);
         this.setTitle(title);
@@ -189,4 +192,26 @@ public class Find extends JFrame implements ActionListener{
         }
     }
     
+    private void darktheme()
+    {
+        if(this.darktheme)
+        {
+            this.getContentPane().setBackground(Color.DARK_GRAY);
+            this.getContentPane().setForeground(Color.WHITE);
+            this.lbl_find.setBackground(Color.DARK_GRAY);
+            this.lbl_find.setForeground(Color.WHITE);
+            this.tf_find.setBackground(Color.GRAY);
+            this.tf_find.setForeground(Color.WHITE);
+            
+        }
+        else
+        {
+            this.getContentPane().setBackground(Color.WHITE);
+            this.getContentPane().setForeground(Color.BLACK);
+            this.lbl_find.setBackground(Color.WHITE);
+            this.lbl_find.setForeground(Color.BLACK);
+            this.tf_find.setBackground(Color.WHITE);
+            this.tf_find.setForeground(Color.BLACK);
+        }
+    }
 }
