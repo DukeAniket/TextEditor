@@ -229,8 +229,4 @@ public class Find extends JFrame implements ActionListener{
         }
     }
     
-    public static void main(String[] args)
-    {
-        new Find(new JTextArea());
-    }
 }
