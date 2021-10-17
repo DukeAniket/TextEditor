@@ -36,7 +36,8 @@ public final class TextEditor extends JFrame implements ActionListener{
     JMenuItem copy, cut, paste, selectall, undo, redo, clearall;
     
     //Tools Menu Items
-    JMenuItem find, replace;
+    JMenuItem find, replace, tabsize_inc, tabsize_dec, tabsize_default;
+    JMenu change_tabsize;
     
     //Format Menu Items
     JMenu font, size, style, color;
@@ -47,6 +48,7 @@ public final class TextEditor extends JFrame implements ActionListener{
     
     //Themes Menu Items
     JMenuItem light, dark;
+    boolean darktheme = false;
     
     //Help Menu Items
     JMenuItem about;
@@ -55,6 +57,7 @@ public final class TextEditor extends JFrame implements ActionListener{
     JTextArea workspace;
     JScrollPane scrollpane;
     Insets insets;
+    int tabsize;
     
     String text;
     String fileName;
@@ -145,6 +148,15 @@ public final class TextEditor extends JFrame implements ActionListener{
         
         else if(e.getActionCommand().equals("replace"))
             replace();
+        
+        else if(e.getActionCommand().equals("tabsize_inc"))
+            changetabsize('+');
+        
+        else if(e.getActionCommand().equals("tabsize_dec"))
+            changetabsize('-');
+        
+        else if(e.getActionCommand().equals("tabsize_default"))
+            changetabsize('.');
         
         else if(e.getActionCommand().startsWith("fonttype"))
             font(e.getActionCommand());
@@ -313,6 +325,10 @@ public final class TextEditor extends JFrame implements ActionListener{
         replace.addActionListener(this);
         replace.setActionCommand("replace");
         tools.add(replace);
+        
+        change_tabsize = new JMenu("Change Tab Size");
+        create_tabsize_submenu();
+        tools.add(change_tabsize);
     }
     
     private void create_format_menu()
@@ -359,6 +375,7 @@ public final class TextEditor extends JFrame implements ActionListener{
     
     private void create_workspace()
     {
+        this.tabsize = 3;
         insets = new Insets(5,5,5,5);
         workspace = new JTextArea();
         workspace.setMargin(insets);
@@ -373,11 +390,30 @@ public final class TextEditor extends JFrame implements ActionListener{
             }
         });
         workspace.setLineWrap(true);
+        workspace.setTabSize(tabsize);
         workspace.setWrapStyleWord(true);
         
         scrollpane = new JScrollPane(workspace);
         scrollpane.setBorder(BorderFactory.createEmptyBorder());
         add(scrollpane, BorderLayout.CENTER);
+    }
+    
+    private void create_tabsize_submenu()
+    {
+        tabsize_inc = new JMenuItem("Increase Tab Size");
+        tabsize_inc.setActionCommand("tabsize_inc");
+        tabsize_inc.addActionListener(this);
+        change_tabsize.add(tabsize_inc);
+        
+        tabsize_dec = new JMenuItem("Decrease Tab Size");
+        tabsize_dec.setActionCommand("tabsize_dec");
+        tabsize_dec.addActionListener(this);
+        change_tabsize.add(tabsize_dec);
+        
+        tabsize_default = new JMenuItem("Default Tab Size");
+        tabsize_default.setActionCommand("tabsize_default");
+        tabsize_default.addActionListener(this);
+        change_tabsize.add(tabsize_default);
     }
     
     private void create_font_submenu()
@@ -689,12 +725,23 @@ public final class TextEditor extends JFrame implements ActionListener{
     
     private void find()
     {
-        new Find(this.workspace);
+        new Find(this.workspace, this.darktheme);
     }
     
     private void replace()
     {
-        new Replace(this.workspace);
+        new Replace(this.workspace, this.darktheme);
+    }
+    
+    private void changetabsize(char c)
+    {
+        switch(c)
+        {
+            case '+': this.tabsize++; break;
+            case '-': this.tabsize--; break;
+            case '.': this.tabsize=3; break;
+        }
+        this.workspace.setTabSize(tabsize);
     }
     
     private void font(String type)
@@ -750,6 +797,7 @@ public final class TextEditor extends JFrame implements ActionListener{
     private void light()
     {
         fontcolor = Color.BLACK;
+        this.darktheme = false;
         updatefont();
         setBackground(Color.WHITE);
         workspace.setBackground(Color.WHITE);
@@ -759,15 +807,16 @@ public final class TextEditor extends JFrame implements ActionListener{
     private void dark()
     {
         fontcolor = Color.WHITE;
+        this.darktheme = true;
         updatefont();
-        setBackground(Color.BLACK);
-        workspace.setBackground(Color.BLACK);
+        setBackground(Color.DARK_GRAY);
+        workspace.setBackground(Color.DARK_GRAY);
         workspace.setCaretColor(Color.WHITE);
     }
     
     private void about()
     {
-        new About();
+        new About(this.darktheme);
     }
     
     private void updatefont()
